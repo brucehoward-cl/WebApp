@@ -7,34 +7,42 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Models;
 
 namespace WebApp
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public Startup(IConfiguration config)
         {
+            Configuration = config;
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public IConfiguration Configuration { get; set; }
+
+        public void ConfigureServices(IServiceCollection services)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            services.AddDbContext<DataContext>(opts => {
+                opts.UseSqlServer(Configuration["ConnectionStrings:ProductConnection"]);
+                opts.EnableSensitiveDataLogging(true);
+            });
+        }
 
+        public void Configure(IApplicationBuilder app, DataContext context)
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseStaticFiles();
             app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context =>
-                {
+            app.UseMiddleware<TestMiddleware>();
+            app.UseEndpoints(endpoints => {
+                endpoints.MapGet("/", async context => {
                     await context.Response.WriteAsync("Hello World!");
                 });
             });
+
+            SeedData.SeedDatabase(context);
         }
     }
 }
