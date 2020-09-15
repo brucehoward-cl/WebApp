@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp
 {
@@ -28,18 +29,29 @@ namespace WebApp
                 opts.UseSqlServer(Configuration["ConnectionStrings:ProductConnection"]);
                 opts.EnableSensitiveDataLogging(true);
             });
+            //services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+            services.Configure<MvcNewtonsoftJsonOptions>(opts => {
+                opts.SerializerSettings.NullValueHandling
+                = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
+            //services.Configure<JsonOptions>(opts => {
+            //    opts.JsonSerializerOptions.IgnoreNullValues = true;
+            //});
         }
 
         public void Configure(IApplicationBuilder app, DataContext context)
         {
             app.UseDeveloperExceptionPage();
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
             app.UseRouting();
             app.UseMiddleware<TestMiddleware>();
             app.UseEndpoints(endpoints => {
                 endpoints.MapGet("/", async context => {
                     await context.Response.WriteAsync("Hello World!");
                 });
+                //endpoints.MapWebService();
+                endpoints.MapControllers();
             });
 
             SeedData.SeedDatabase(context);
