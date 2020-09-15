@@ -30,14 +30,19 @@ namespace WebApp
                 opts.EnableSensitiveDataLogging(true);
             });
             //services.AddControllers();
-            services.AddControllers().AddNewtonsoftJson();
-            services.Configure<MvcNewtonsoftJsonOptions>(opts => {
+            //services.AddControllers().AddNewtonsoftJson(); // Json Patch
+            services.AddControllers().AddNewtonsoftJson().AddXmlSerializerFormatters();  // enabling content negotiation (XML formatting)
+            services.Configure<MvcNewtonsoftJsonOptions>(opts => {   // Json Patch
                 opts.SerializerSettings.NullValueHandling
                 = Newtonsoft.Json.NullValueHandling.Ignore;
             });
-            //services.Configure<JsonOptions>(opts => {
+            //services.Configure<JsonOptions>(opts => {  //prior to Json Patch
             //    opts.JsonSerializerOptions.IgnoreNullValues = true;
             //});
+            services.Configure<MvcOptions>(opts => {        //for Content Negotiation; tells MVC to respect the headers's Accept setting
+                opts.RespectBrowserAcceptHeader = true;     //MVC won't now default to Json if the header contains '*/*' in it 
+                opts.ReturnHttpNotAcceptable = true;
+            });
         }
 
         public void Configure(IApplicationBuilder app, DataContext context)
