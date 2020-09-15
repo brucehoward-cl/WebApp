@@ -52,11 +52,13 @@ namespace WebApp.Controllers
             return $"JSON: {product.Name}";
         }
 
-        [HttpPost]
-        [Consumes("application/xml")]   //restricts the data type this method will handle
-        public string SaveProductXml(ProductBindingTarget product)
-        {
-            return $"XML: {product.Name}";
-        }
+        #region Commented out for the 'Documenting Web Services' lesson (but was used for Content Formatting)
+        //[HttpPost]
+        //[Consumes("application/xml")]   //restricts the data type this method will handle
+        //public string SaveProductXml(ProductBindingTarget product)
+        //{
+        //    return $"XML: {product.Name}";
+        //} 
+        #endregion
     }
 }

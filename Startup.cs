@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 
 namespace WebApp
 {
@@ -43,6 +44,10 @@ namespace WebApp
                 opts.RespectBrowserAcceptHeader = true;     //MVC won't now default to Json if the header contains '*/*' in it 
                 opts.ReturnHttpNotAcceptable = true;
             });
+            services.AddSwaggerGen(options => {             //added for Documenting Web Services lesson
+                options.SwaggerDoc("v1",
+                new OpenApiInfo { Title = "WebApp", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, DataContext context)
@@ -58,6 +63,14 @@ namespace WebApp
                 //endpoints.MapWebService();
                 endpoints.MapControllers();
             });
+
+            #region Documenting Web Services
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApp");
+            }); 
+            #endregion
 
             SeedData.SeedDatabase(context);
         }

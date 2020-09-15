@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApp.Controllers
 {
@@ -32,6 +33,8 @@ namespace WebApp.Controllers
         #endregion
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]         //added for the Documenting Web Services; adds more documentation to open API response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]   //addes for the Documenting Web Services; adds more documentation to open API response
         public async Task<IActionResult> GetProduct(long id)
         {
             Product p = await context.Products.FindAsync(id);
