@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 
 namespace WebApp
@@ -25,12 +26,21 @@ namespace WebApp
                 opts.UseSqlServer(Configuration["ConnectionStrings:ProductConnection"]);
                 opts.EnableSensitiveDataLogging(true);
             });
+            
             //services.AddControllers();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddRazorPages().AddRazorRuntimeCompilation();  //needed to add razor pages (enables runtime recompilation)
             services.AddDistributedMemoryCache();
+            
             services.AddSession(options => {
                 options.Cookie.IsEssential = true;
             });
+
+            services.Configure<RazorPagesOptions>(opts => {
+                opts.Conventions.AddPageRoute("/Index", "/extra/page/{id:long?}");
+            });
+
+            services.AddSingleton<CitiesData>();
         }
 
         public void Configure(IApplicationBuilder app, DataContext context)
@@ -43,6 +53,7 @@ namespace WebApp
                 endpoints.MapControllers();
                 //endpoints.MapControllerRoute("Default","{controller=Home}/{action=Index}/{id?}"); //this is so common it can be replaced with the MapDefaultControllerRoute() config
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();  //needed to add razor pages (creates the routing configuration)
             });
 
             SeedData.SeedDatabase(context);

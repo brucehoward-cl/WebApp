@@ -1,0 +1,20 @@
+﻿@page
+@*@inject CitiesData Data*@  @*Code used prior to adding the view component*@
+@model WebApp.Pages.CitiesModel
+@*<!--in order to use the new page model class-->*@
+
+<div class="m-2">
+    <table class="table table-sm table-striped table-bordered">
+        <tbody>
+            @*   <!--@foreach (City c in Data.Cities)--><!--used prior to adding the view component-->*@
+            @foreach (City c in Model.Data.Cities)@*used with the view component-->*@
+            {
+                <tr>
+                    <td>@c.Name</td>
+                    <td>@c.Country</td>
+                    <td>@c.Population</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -11,21 +11,40 @@
 }
 
 
-<tr><th>Name</th><td>@Model.Name</td></tr>
+<tr>
+    <th>Name</th>
+    <td>@Model.Name</td>
+</tr>
 <tr>
     <th>Price</th>
     <td>@Model.Price.ToString("c")</td>
 </tr>
-<tr><th>Category ID</th><td>@Model.CategoryId</td></tr>
+<tr>
+    <th>Category ID</th>
+    <td>@Model.CategoryId</td>
+</tr>
+
 @section Footer {
     @(((Model.Price / ViewBag.AveragePrice) * 100).ToString("F2"))% of average price
 }
 
 @section Summary {
     <div class="bg-info text-white m-2 p-2">
-        @Json.Serialize(Model)
+        <!--<vc:city-summary />-->     @*tag helper*@
+        <vc:city-summary theme-name="secondary" />  @*This provides the themeName parameter value used by the view component *@
+        <!--@await Component.InvokeAsync("CitySummary", new { themeName = "secondary" })--> @*This is how to pass the parameter when using the view component asynchronously. It replaces the '<vc:/>' tag*@
+        <vc:page-size /> <!--This is an asynchronous view component-->
     </div>
 }
+
+@*This is prior to tag helper use - begin
+        @section Summary {
+        <div class="bg-info text-white m-2 p-2">
+            @Json.Serialize(Model)
+            @await Component.InvokeAsync("CitySummary")
+        </div>
+    }  Tag helper use - end
+*@
 
 
 @*Prior to adding sections*@
