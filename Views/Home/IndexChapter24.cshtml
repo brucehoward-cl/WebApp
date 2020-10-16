@@ -1,0 +1,70 @@
+﻿<!--This section was for Chapter 24 View Components -->
+@model Product
+@{
+    Layout = "_Layout";
+    //Layout = Model.Price > 100 ? "_ImportantLayout" : "_Layout";  //Example of a layout determined programmatically
+    //Layout = "_ImportantLayout"; /* Overrides the layout specified in _ViewStart */
+    ViewBag.Title = ViewBag.Title ?? "Product Table";  /* If not set by the Action method */
+}
+
+@section Header {
+    Product Information
+}
+
+
+<tr>
+    <th>Name</th>
+    <td>@Model.Name</td>
+</tr>
+<tr>
+    <th>Price</th>
+    <td>@Model.Price.ToString("c")</td>
+</tr>
+<tr>
+    <th>Category ID</th>
+    <td>@Model.CategoryId</td>
+</tr>
+
+@section Footer {
+    @(((Model.Price / ViewBag.AveragePrice) * 100).ToString("F2"))% of average price
+}
+
+@section Summary {
+    <div class="bg-info text-white m-2 p-2">
+        <!--<vc:city-summary />-->
+}
+<!--@*tag helper*@
+<!--<vc:city-summary theme-name="secondary" />-->
+@*This provides the themeName parameter value used by the view component *@-->
+<!--<!--@await Component.InvokeAsync("CitySummary", new { themeName = "secondary" })-->-->
+<!--@*This is how to pass the parameter when using the view component asynchronously. It replaces the '<vc:/>' tag*@
+<vc:page-size />-->
+ <!--This is an asynchronous view component-->
+<!--</div>
+}-->
+<!--This section was for Chapter 24 View Components -->
+@*This is prior to tag helper use - begin
+        @section Summary {
+        <div class="bg-info text-white m-2 p-2">
+            @Json.Serialize(Model)
+            @await Component.InvokeAsync("CitySummary")
+        </div>
+    }  Tag helper use - end
+*@
+
+
+@*Prior to adding sections*@
+@*<div class="m-2">
+        <table class="table table-sm table-striped table-bordered">
+            <tbody>
+                <tr><th>Name</th><td>@Model.Name</td></tr>
+                <tr>
+                    <th>Price</th>
+                    <td>@Model.Price.ToString("c") (@(((Model.Price / ViewBag.AveragePrice) * 100).ToString("F2"))% of average price)</td>
+                </tr>
+                <tr><th>Category ID</th><td>@Model.CategoryId</td></tr>
+            </tbody>
+        </table>
+    </div>*@
+
+
