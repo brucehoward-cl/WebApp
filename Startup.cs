@@ -3,8 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
-using Microsoft.AspNetCore.Razor.TagHelpers; //for registering tag helpers
-using WebApp.TagHelpers;  //for registering tag helpers
+//using Microsoft.AspNetCore.Razor.TagHelpers; //for registering tag helpers
+//using WebApp.TagHelpers;  //for registering tag helpers
 
 namespace WebApp
 {
@@ -27,8 +27,8 @@ namespace WebApp
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddSingleton<CitiesData>();
-            services.AddTransient<ITagHelperComponent, TimeTagHelperComponent>();  //registers the tag helpers as a service; AddTransient ensures each request is handled using its own instance
-            services.AddTransient<ITagHelperComponent, TableFooterTagHelperComponent>(); //notice that each defined TagHelperComponent must be registered separately
+            //services.AddTransient<ITagHelperComponent, TimeTagHelperComponent>();  //registers the tag helpers as a service; AddTransient ensures each request is handled using its own instance
+            //services.AddTransient<ITagHelperComponent, TableFooterTagHelperComponent>(); //notice that each defined TagHelperComponent must be registered separately
         }
 
         public void Configure(IApplicationBuilder app, DataContext context)
