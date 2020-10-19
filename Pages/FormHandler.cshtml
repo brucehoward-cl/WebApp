@@ -1,0 +1,64 @@
+﻿@page "/pages/form/{id:long?}"
+@model FormHandlerModel
+@using Microsoft.AspNetCore.Mvc.RazorPages
+@using Microsoft.EntityFrameworkCore
+
+<div class="m-2">
+    <h5 class="bg-primary text-white text-center p-2">HTML Form</h5>
+    <!--<form asp-page="FormHandler" method="post">-->
+    <form asp-page="FormHandler" method="post" id="htmlform"><!-- id attribute used for buttons outside of form -->
+        <div class="form-group">
+            <label>Name</label>
+            <!--<input class="form-control" name="Name" value="@Model.Product.Name" />-->
+            <input class="form-control" asp-for="Product.Name" /> <!-- uses the nested propertied -->
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input class="form-control" asp-for="Product.Price" /><!-- uses the nested propertied -->
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <input class="form-control" asp-for="Product.Category.Name" /><!-- uses the nested propertied -->
+        </div>
+        <div class="form-group">
+            <label>Supplier</label>
+            <input class="form-control" asp-for="Product.Supplier.Name" /><!-- uses the nested propertied -->
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <button form="htmlform" asp-page="FormHandler" class="btn btn-primary mt-2">
+        Submit (Outside Form)
+    </button>
+</div>
+
+@functions {
+    //[IgnoreAntiforgeryToken]
+    public class FormHandlerModel : PageModel
+    {
+        private DataContext context;
+
+        public FormHandlerModel(DataContext dbContext)
+        {
+            context = dbContext;
+        }
+
+        public Product Product { get; set; }
+
+        public async Task OnGetAsync(long id = 1)
+        {
+            //Product = await context.Products.FindAsync(id);
+            Product = await context.Products.Include(p => p.Category)
+                                            .Include(p => p.Supplier)
+                                            .FirstAsync(p => p.ProductId == id); //include the nested properties
+        }
+
+        public IActionResult OnPost()
+        {
+            foreach (string key in Request.Form.Keys.Where(k => !k.StartsWith("_")))
+            {
+                TempData[key] = string.Join(", ", Request.Form[key]);
+            }
+            return RedirectToPage("FormResults");
+        }
+    }
+}

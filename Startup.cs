@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
 //using Microsoft.AspNetCore.Razor.TagHelpers; //for registering tag helpers
 //using WebApp.TagHelpers;  //for registering tag helpers
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApp
 {
@@ -29,15 +31,27 @@ namespace WebApp
             services.AddSingleton<CitiesData>();
             //services.AddTransient<ITagHelperComponent, TimeTagHelperComponent>();  //registers the tag helpers as a service; AddTransient ensures each request is handled using its own instance
             //services.AddTransient<ITagHelperComponent, TableFooterTagHelperComponent>(); //notice that each defined TagHelperComponent must be registered separately
+            services.Configure<AntiforgeryOptions>(opts => {
+                opts.HeaderName = "X-XSRF-TOKEN";
+            });
         }
 
-        public void Configure(IApplicationBuilder app, DataContext context)
+        //public void Configure(IApplicationBuilder app, DataContext context)
+        public void Configure(IApplicationBuilder app, DataContext context, IAntiforgery antiforgery)
         {
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
             app.UseRouting();
+            app.Use(async (context, next) => {
+                if (!context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.Cookies.Append("XSRF-TOKEN", antiforgery.GetAndStoreTokens(context).RequestToken, new CookieOptions { HttpOnly = false });
+                }
+                await next();
+            }); //To enable the antiforgery token for use with javascript
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("forms", "controllers/{controller=Home}/{action=Index}/{id?}"); //allows better differentiation between controllers and pages in examples
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });

@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <!--<link href="/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />-->
+    <!--<link asp-href-include="/lib/twitter-bootstrap/css/*.min.css"
+          asp-href-exclude="**/*-reboot*,**/*-grid*" rel="stylesheet" />--> <!-- This uses the LinkTagHelper -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+          asp-fallback-href="/lib/twitter-bootstrap/css/bootstrap.min.css"
+          asp-fallback-test-class="btn"
+          asp-fallback-test-property="display"
+          asp-fallback-test-value="inline-block"
+          rel="stylesheet" /> <!--This uses the CDN fallback feature; The failure test is more complicated than the js failure test -->
+    <!--<script asp-src-include="lib/jquery/**/*.js"></script>-->  <!--This Globbing pattern matches every js file-->
+    <!--<script asp-src-include="lib/jquery**/*.min.js"></script>--> <!-- This Globbing pattern matches only the minified js files-->
+    <!--<script asp-src-include="lib/jquery**/*slim.min.js"></script>--> <!-- This Globbing pattern only matches the slim minified js files-->
+    <!--<script asp-src-include="/lib/jquery/**/*.min.js"
+            asp-src-exclude="**.slim.**">
+    </script>-->
+    <!-- using the exclude attribute -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+            asp-fallback-src="/lib/jquery/jquery.min.js"
+            asp-fallback-test="window.jQuery">
+    </script> <!-- using a content delivery network, but falling back to local copies if cdn not available -->
+</head>
+<body>
+    <div class="m-2">
+        <environment names="development"> <!-- Using the EnvironmentTagHelper -->
+            <h2 class="bg-info text-white m-2 p-2">This is Development</h2>
+        </environment>
+        <environment names="production">
+            <h2 class="bg-danger text-white m-2 p-2">This is Production</h2>
+        </environment>
+        <!--<img src="/images/city.png" asp-append-version="true" class="m-2" />--> <!-- Uses the ImageTagHelper and the asp-append-version attribute enables cache busting -->
+        <h6 class="bg-primary text-white m-2 p-2">
+            Uncached timestamp: @DateTime.Now.ToLongTimeString()
+        </h6> <!-- This element used to provide contrast to cached element -->
+        <!--<cache expires-after="@TimeSpan.FromSeconds(15)">--><!-- cache expires after 15 seconds-->
+        <!--<cache expires-on="@DateTime.Parse("2021-01-01")">--> <!-- set to expire at a particular time-->
+        <!--<cache expires-sliding="@TimeSpan.FromSeconds(10)">--><!-- period of time after which content expires if it hasn't been retrived from cache -->
+        <cache expires-sliding="@TimeSpan.FromSeconds(10)" vary-by-route="action">
+            <!--Creates cache variations based on 'action' value matched by routing system-->
+            <h6 class="bg-primary text-white m-2 p-2">
+                Cached timestamp: @DateTime.Now.ToLongTimeString()
+            </h6>
+        </cache> <!-- This element denotes the content that should be cached-->
+        @RenderBody()
+    </div>
+</body>
+</html>
