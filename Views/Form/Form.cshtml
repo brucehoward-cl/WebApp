@@ -1,57 +1,30 @@
 ﻿@model Product
-
-@{
-    Layout = "_SimpleLayout";
+@{ 
+    Layout = "_SimpleLayout"; 
 }
 
 <h5 class="bg-primary text-white text-center p-2">HTML Form</h5>
 
 
-<!--<form action="/controllers/form/submitform" method="post">-->
-<!--<form asp-action="submitform" method="post">--> <!-- Using the form FormTagHelper (the attribute applys the tag helper -->
 <form asp-action="submitform" method="post" id="htmlform">
-    <!-- id attribute used to sync button outside of form -->
-    <div class="form-group">
-        <!--<label>Id</label>-->
-        <label asp-for="ProductId"></label>
-        <input class="form-control" asp-for="ProductId" />
-    </div>
 
     <div class="form-group">
-        <!--<label>Name</label>-->
         <label asp-for="Name"></label>
-        <!--<input class="form-control" name="Name" value="@Model.Name" />-->
         <input class="form-control" asp-for="Name" />
     </div>
 
     <div class="form-group">
-        <!--<label>Price</label>-->
         <label asp-for="Price"></label>
-        <input class="form-control" asp-for="Price" /> <!-- using the default formatting -->
-        <!--<input class="form-control" asp-for="Price" asp-format="{0:#,###.00}" />-->
+        <input class="form-control" asp-for="Price" />
     </div>
 
     <div class="form-group">
-        <!--<label>Category</label>-->
-        <label asp-for="Category.Name">Category</label>
-        <!--<select class="form-control" asp-for="CategoryId">
-            <option value="1">Watersports</option>
-            <option value="2">Soccer</option>
-            <option value="3">Chess</option>
-        </select>--><!-- Using the SelectTagHelper with explicitly defined options -->
-        <select class="form-control" asp-for="CategoryId" asp-items="@ViewBag.Categories"></select> <!--SelectTagHelper with dynamically defined options -->
-        <!--<input class="form-control" asp-for="Category.Name" />--> <!-- value of asp-for attribute is expressed as relative to model object -->
-    </div>
-
-    <div class="form-group">
-        <!--<label>Supplier</label>-->
-        <label asp-for="Supplier.Name">Supplier</label>
-        <textarea class="form-control" asp-for="Supplier.Name"></textarea> <!-- using TextAreaTagHelper-->
-        <!--<input class="form-control" asp-for="Supplier.Name" />--> <!-- value of asp-for attribute is expressed as relative to model object -->
+        <!-- A nested property -->
+        <label>Category Name</label>
+        <!--<input class="form-control" name="Category.Name" value="@Model.Category.Name" />--> <!-- nested property without using tag helper -->
+        <input class="form-control" asp-for="Category.Name" /> <!-- nested property with using tag helper -->
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>
-<button form="htmlform" asp-action="submitform" class="btn btn-primary mt-2"> <!-- form attribute set to form's id attribute -->
-    Sumit (Outside Form)
-</button>

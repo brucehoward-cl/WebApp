@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebApp.Models
 {
@@ -10,7 +11,8 @@ namespace WebApp.Models
         public string Name { get; set; }
 
         [Column(TypeName = "decimal(8, 2)")]
-        [DisplayFormat(DataFormatString = "{0:c2}", ApplyFormatInEditMode = true)] 
+        //[DisplayFormat(DataFormatString = "{0:c2}", ApplyFormatInEditMode = true)] //used for FormTagHelper lesson, but commented for Model Binding
+        //[BindNever]     //This prevents model binding throughout the application; used to reduce 'over-binding' attacks
         public decimal Price { get; set; }
         
         public long CategoryId { get; set; }

@@ -33,14 +33,55 @@ namespace WebApp.Controllers
         //} 
         #endregion
 
+        #region Pre-Model Binding lesson
+        //[HttpPost]
+        //public IActionResult SubmitForm()
+        //{
+        //    //foreach (string key in Request.Form.Keys.Where(k => !k.StartsWith("_"))) //This was used just to hide the antiforgerytoken attribute
+        //    foreach (string key in Request.Form.Keys)
+        //        {
+        //        TempData[key] = string.Join(", ", Request.Form[key]);
+        //    }
+        //    return RedirectToAction(nameof(Results));
+        //} 
+        #endregion
+
+        #region Model Binding individual properties
+        //[HttpPost]
+        //public IActionResult SubmitForm(string name, decimal price)
+        //{
+        //    TempData["name param"] = name;
+        //    TempData["price param"] = price.ToString();
+        //    return RedirectToAction(nameof(Results));
+        //} 
+        #endregion
+
+        #region using a complex object for model binding
+        //[HttpPost]
+        //public IActionResult SubmitForm(Product product)
+        //{
+        //    TempData["product"] = System.Text.Json.JsonSerializer.Serialize(product);
+        //    return RedirectToAction(nameof(Results));
+        //} 
+        #endregion
+
+        #region Example binding to alternate types of objects
+        //[HttpPost]
+        ////public IActionResult SubmitForm(Category category)
+        //public IActionResult SubmitForm([Bind(Prefix = "Category")] Category category)
+        //{
+        //    TempData["category"] = System.Text.Json.JsonSerializer.Serialize(category);
+        //    return RedirectToAction(nameof(Results));
+        //} 
+        #endregion
+
         [HttpPost]
-        public IActionResult SubmitForm()
+        public IActionResult SubmitForm([Bind("Name", "Category")] Product product) 
+            //The Bind attribute specifies exactly which props to bind for Product and excludes any others; this reduces the risk of 'over-binding' attacks
         {
-            //foreach (string key in Request.Form.Keys.Where(k => !k.StartsWith("_"))) //This was used just to hide the antiforgerytoken attribute
-            foreach (string key in Request.Form.Keys)
-                {
-                TempData[key] = string.Join(", ", Request.Form[key]);
-            }
+            TempData["name"] = product.Name;
+            TempData["price"] = product.Price.ToString();
+            TempData["category name"] = product.Category.Name;
             return RedirectToAction(nameof(Results));
         }
 

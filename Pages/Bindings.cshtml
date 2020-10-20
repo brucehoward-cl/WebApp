@@ -1,0 +1,103 @@
+﻿@page "/pages/bindings"
+@model BindingsModel
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Mvc.RazorPages
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form asp-page="Bindings" method="post">
+                <!--Binding to Collections of Complex Types example -->
+                @for (int i = 0; i < 2; i++)
+                {
+                    <div class="form-group">
+                        <label>Name #@i</label>
+                        <input class="form-control" name="Data[@i].Name" value="Product-@i" />
+                    </div>
+                    <div class="form-group">
+                        <label>Price #@i</label>
+                        <input class="form-control" name="Data[@i].Price" value="@(100 + i)" />
+                    </div>
+                }
+                <!--Below section used prior to Binding to Collections of Complex Types example-->
+                @*<div class="form-group">
+                    <label>Value #1</label>
+                    <!--<input class="form-control" name="Data" value="Item 1" />-->
+                    <!--<input class="form-control" name="Data[1]" value="Item 1" />--> <!-- Specifying position in the array -->
+                    <input class="form-control" name="Data[first]" value="Item 1" /> <!-- For Dictionaries, the index is used as the key -->
+                </div>
+                <div class="form-group">
+                    <label>Value #2</label>
+                    <!--<input class="form-control" name="Data" value="Item 2" />-->
+                    <!--<input class="form-control" name="Data[0]" value="Item 2" />--> <!-- Specifying position in the array -->
+                    <input class="form-control" name="Data[second]" value="Item 2" /> <!-- For Dictionaries, the index is used as the key -->
+                </div>
+                <div class="form-group">
+                    <label>Value #3</label>
+                    <!--<input class="form-control" name="Data" value="Item 3" />-->
+                    <<!--input class="form-control" name="Data[2]" value="Item 3" />--> <!-- Specifying position in the array -->
+                    <input class="form-control" name="Data[third]" value="Item 3" /> <!-- For Dictionaries, the index is used as the key -->
+                </div>*@
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a class="btn btn-secondary" asp-page="Bindings">Reset</a>
+            </form>
+        </div>
+        <div class="col">
+            @*<ul class="list-group">
+            @foreach (string s in Model.Data.Where(s => s != null))
+            {
+                <li class="list-group-item">@s</li>
+            }
+            </ul>*@ <!--not used for the Dictionary example-->
+            <table class="table table-sm table-striped">
+
+                @*<tbody> <!--used for the Dictionary example-->
+                    @foreach (string key in Model.Data.Keys)
+                    {
+                        <tr>
+                            <th>@key</th>
+                            <td>@Model.Data[key]</td>
+                        </tr>
+                    }
+                </tbody>*@
+                <tbody>
+                    <tr><th>Name</th><th>Price</th></tr>
+                    @foreach (Product p in Model.Data)
+                    {
+                        <tr>
+                            <td>@p.Name</td>
+                            <td>@p.Price</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@functions {
+    public class BindingsModel : PageModel
+    {
+        [BindProperty(Name = "Data")]
+        //public string[] Data { get; set; } = Array.Empty<string>();
+        //public SortedSet<string> Data { get; set; } = new SortedSet<string>();  //The only thing different frome Array, is the type that is declared!
+        //public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
+        public Product[] Data { get; set; } = Array.Empty<Product>(); //used for binding collections of complex types
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
