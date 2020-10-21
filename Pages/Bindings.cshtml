@@ -8,8 +8,24 @@
     <div class="row">
         <div class="col">
             <form asp-page="Bindings" method="post">
+                <!--Using Manual Model Binding-->
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" asp-for="Data.Name" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input class="form-control" asp-for="Data.Price"
+                           value="@(Model.Data.Price + 1)" />
+                </div>
+                <div class="form-check m-2">
+                    <input class="form-check-input" type="checkbox" name="bind"
+                           value="true" checked />
+                    <label class="form-check-label">Model Bind?</label>
+                </div>
+
                 <!--Binding to Collections of Complex Types example -->
-                @for (int i = 0; i < 2; i++)
+                @*@for (int i = 0; i < 2; i++)
                 {
                     <div class="form-group">
                         <label>Name #@i</label>
@@ -19,7 +35,8 @@
                         <label>Price #@i</label>
                         <input class="form-control" name="Data[@i].Price" value="@(100 + i)" />
                     </div>
-                }
+                }*@
+                
                 <!--Below section used prior to Binding to Collections of Complex Types example-->
                 @*<div class="form-group">
                     <label>Value #1</label>
@@ -44,13 +61,19 @@
             </form>
         </div>
         <div class="col">
-            @*<ul class="list-group">
-            @foreach (string s in Model.Data.Where(s => s != null))
-            {
-                <li class="list-group-item">@s</li>
-            }
-            </ul>*@ <!--not used for the Dictionary example-->
+            <!--Below section used prior to Binding to Collections of Complex Types example-->
+               @*<ul class="list-group">
+                @foreach (string s in Model.Data.Where(s => s != null))
+                {
+                    <li class="list-group-item">@s</li>
+                }
+                </ul>*@ <!--not used for the Dictionary example-->
             <table class="table table-sm table-striped">
+                <tr><th>Name</th><th>Price</th></tr>
+                <tr>
+                    <td>@Model.Data.Name</td>
+                    <td>@Model.Data.Price</td>
+                </tr>
 
                 @*<tbody> <!--used for the Dictionary example-->
                     @foreach (string key in Model.Data.Keys)
@@ -61,7 +84,9 @@
                         </tr>
                     }
                 </tbody>*@
-                <tbody>
+
+                <!--Binding to Collections of Complex Types example-->
+                @*<tbody>
                     <tr><th>Name</th><th>Price</th></tr>
                     @foreach (Product p in Model.Data)
                     {
@@ -70,7 +95,7 @@
                             <td>@p.Price</td>
                         </tr>
                     }
-                </tbody>
+                </tbody>*@
             </table>
         </div>
     </div>
@@ -80,11 +105,23 @@
 @functions {
     public class BindingsModel : PageModel
     {
-        [BindProperty(Name = "Data")]
+        //[BindProperty(Name = "Data")]
+        //[FromQuery(Name = "Data")]  //changes the default Model Binding matching sequence
         //public string[] Data { get; set; } = Array.Empty<string>();
         //public SortedSet<string> Data { get; set; } = new SortedSet<string>();  //The only thing different frome Array, is the type that is declared!
         //public Dictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
-        public Product[] Data { get; set; } = Array.Empty<Product>(); //used for binding collections of complex types
+        //public Product[] Data { get; set; } = Array.Empty<Product>(); //used for binding collections of complex types
+
+
+        public Product Data { get; set; } = new Product() { Name = "Skis", Price = 500 };
+        public async Task OnPostAsync([FromForm] bool bind)
+        {
+            if (bind)
+            {
+                await TryUpdateModelAsync<Product>(Data, "data", p => p.Name, p => p.Price);
+            }
+        }
+
     }
 }
 

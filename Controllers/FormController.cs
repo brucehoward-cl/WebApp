@@ -17,7 +17,8 @@ namespace WebApp.Controllers
             context = dbContext;
         }
 
-        public async Task<IActionResult> Index(long id = 1)
+        //public async Task<IActionResult> Index(long id = 1)
+        public async Task<IActionResult> Index([FromQuery] long? id) //changes the default Model Binding matching sequence
         {
             ViewBag.Categories = new SelectList(context.Categories, "CategoryId", "Name");
 
@@ -88,6 +89,27 @@ namespace WebApp.Controllers
         public IActionResult Results()
         {
             return View(TempData);
+        }
+
+        #region selecting from header
+        //public string Header([FromHeader] string accept) //used to bind from the header
+        //{
+        //    return $"Header: {accept}";
+        //} 
+        #endregion
+
+        #region selecting from header using a header element that doesn't follow C# naming standards
+        public string Header([FromHeader(Name = "Accept-Language")] string accept)
+        {
+            return $"Header: {accept}";
+        }
+        #endregion
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public Product Body([FromBody] Product model)
+        {
+            return model;
         }
     }
 }
