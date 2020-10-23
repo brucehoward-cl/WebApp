@@ -5,26 +5,32 @@
 
 <h5 class="bg-primary text-white text-center p-2">HTML Form</h5>
 
+<partial name="_Validation" />  <!-- using partial taghelper to insert javascript file -->
 
 <form asp-action="submitform" method="post" id="htmlform">
-
+    <!--<div asp-validation-summary="All" class="text-danger"></div>--> <!--This is the error summary tag helper -->
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div> <!-- ModelOnly will force summary to exclude property errors and only show model level errors -->
     <div class="form-group">
         <label asp-for="Name"></label>
-        <input class="form-control" asp-for="Name" />
+        <div><span asp-validation-for="Name" class="text-danger"></span></div>
+        <!--<input class="form-control" asp-for="Name" />-->
+        <input class="form-control valid" type="text" data-val="true" data-val-required="The name field is required."
+               id="Name" name="Name" value="Kayak" aria-describedby="Name-error" aria-invalid="false"> <!--uses client-side jquery validation -->
     </div>
-
     <div class="form-group">
         <label asp-for="Price"></label>
+        <div><span asp-validation-for="Price" class="text-danger"></span></div>
         <input class="form-control" asp-for="Price" />
     </div>
-
     <div class="form-group">
-        <!-- A nested property -->
-        <label>Category Name</label>
-        <!--<input class="form-control" name="Category.Name" value="@Model.Category.Name" />--> <!-- nested property without using tag helper -->
-        <input class="form-control" asp-for="Category.Name" /> <!-- nested property with using tag helper -->
+        <label>CategoryId</label>
+        <div><span asp-validation-for="CategoryId" class="text-danger"></span></div>
+        <input class="form-control" asp-for="CategoryId" />
     </div>
-
+    <div class="form-group">
+        <label>SupplierId</label>
+        <div><span asp-validation-for="SupplierId" class="text-danger"></span></div>
+        <input class="form-control" asp-for="SupplierId" />
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
-
 </form>

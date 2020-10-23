@@ -7,6 +7,7 @@ using WebApp.Models;
 //using WebApp.TagHelpers;  //for registering tag helpers
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp
 {
@@ -34,6 +35,8 @@ namespace WebApp
             services.Configure<AntiforgeryOptions>(opts => {
                 opts.HeaderName = "X-XSRF-TOKEN";
             });
+            services.Configure<MvcOptions>(opts => 
+                opts.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(value => "Please enter a value"));
         }
 
         //public void Configure(IApplicationBuilder app, DataContext context)

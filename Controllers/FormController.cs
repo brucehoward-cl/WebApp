@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 
 namespace WebApp.Controllers
 {
@@ -17,99 +18,79 @@ namespace WebApp.Controllers
             context = dbContext;
         }
 
-        //public async Task<IActionResult> Index(long id = 1)
-        public async Task<IActionResult> Index([FromQuery] long? id) //changes the default Model Binding matching sequence
+        public async Task<IActionResult> Index(long? id)
         {
-            ViewBag.Categories = new SelectList(context.Categories, "CategoryId", "Name");
-
-            return View("Form", await context.Products.Include(p => p.Category)
-                                                      .Include(p => p.Supplier)
-                                                      .FirstAsync(p => p.ProductId == id)); //adds the nested properties
+            return View("Form", await context.Products.FirstOrDefaultAsync(p => id == null || p.ProductId == id));
         }
 
-        #region MyRegion
-        //public async Task<IActionResult> Index(long id = 1)
-        //{
-        //    return View("Form", await context.Products.FindAsync(id));
-        //} 
-        #endregion
-
-        #region Pre-Model Binding lesson
-        //[HttpPost]
-        //public IActionResult SubmitForm()
-        //{
-        //    //foreach (string key in Request.Form.Keys.Where(k => !k.StartsWith("_"))) //This was used just to hide the antiforgerytoken attribute
-        //    foreach (string key in Request.Form.Keys)
-        //        {
-        //        TempData[key] = string.Join(", ", Request.Form[key]);
-        //    }
-        //    return RedirectToAction(nameof(Results));
-        //} 
-        #endregion
-
-        #region Model Binding individual properties
-        //[HttpPost]
-        //public IActionResult SubmitForm(string name, decimal price)
-        //{
-        //    TempData["name param"] = name;
-        //    TempData["price param"] = price.ToString();
-        //    return RedirectToAction(nameof(Results));
-        //} 
-        #endregion
-
-        #region using a complex object for model binding
+        #region Used prior to adding custom attribute model validation
         //[HttpPost]
         //public IActionResult SubmitForm(Product product)
         //{
-        //    TempData["product"] = System.Text.Json.JsonSerializer.Serialize(product);
-        //    return RedirectToAction(nameof(Results));
-        //} 
-        #endregion
+        //    #region Used without model property attribute validation
+        //    //if (string.IsNullOrEmpty(product.Name))
+        //    //{
+        //    //    ModelState.AddModelError(nameof(Product.Name), "Enter a name");
+        //    //} // commented out after adding attribute validation to the model properties
 
-        #region Example binding to alternate types of objects
-        //[HttpPost]
-        ////public IActionResult SubmitForm(Category category)
-        //public IActionResult SubmitForm([Bind(Prefix = "Category")] Category category)
-        //{
-        //    TempData["category"] = System.Text.Json.JsonSerializer.Serialize(category);
-        //    return RedirectToAction(nameof(Results));
+        //    //if (ModelState.GetValidationState(nameof(Product.Price)) == ModelValidationState.Valid && product.Price < 1)
+        //    //{
+        //    //    ModelState.AddModelError(nameof(Product.Price), "Enter a positive price");
+        //    //}   // commented out after adding attribute validation to the model properties 
+        //    #endregion
+
+        //    if (ModelState.GetValidationState(nameof(Product.Name)) == ModelValidationState.Valid 
+        //        && ModelState.GetValidationState(nameof(Product.Price)) == ModelValidationState.Valid 
+        //        && product.Name.ToLower().StartsWith("small") && product.Price > 100)
+        //    {
+        //        ModelState.AddModelError("", "Small products cannot cost more than $100"); //Adds a summary level error when a combination of elements is invalid
+        //    }
+
+        //    if (!context.Categories.Any(c => c.CategoryId == product.CategoryId))
+        //    {
+        //        ModelState.AddModelError(nameof(Product.CategoryId), "Enter an existing category ID");
+        //    }
+
+        //    if (!context.Suppliers.Any(s => s.SupplierId == product.SupplierId))
+        //    {
+        //        ModelState.AddModelError(nameof(Product.SupplierId), "Enter an existing supplier ID");
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        TempData["name"] = product.Name;
+        //        TempData["price"] = product.Price.ToString();
+        //        TempData["categoryId"] = product.CategoryId.ToString();
+        //        TempData["supplierId"] = product.SupplierId.ToString();
+        //        return RedirectToAction(nameof(Results));
+        //    }
+        //    else
+        //    {
+        //        return View("Form");
+        //    }
         //} 
         #endregion
 
         [HttpPost]
-        public IActionResult SubmitForm([Bind("Name", "Category")] Product product) 
-            //The Bind attribute specifies exactly which props to bind for Product and excludes any others; this reduces the risk of 'over-binding' attacks
+        public IActionResult SubmitForm(Product product)    //used with custom attribute model validation
         {
-            TempData["name"] = product.Name;
-            TempData["price"] = product.Price.ToString();
-            TempData["category name"] = product.Category.Name;
-            return RedirectToAction(nameof(Results));
+            if (ModelState.IsValid)
+            {
+                TempData["name"] = product.Name;
+                TempData["price"] = product.Price.ToString();
+                TempData["categoryId"] = product.CategoryId.ToString();
+                TempData["supplierId"] = product.SupplierId.ToString();
+                return RedirectToAction(nameof(Results));
+            }
+            else
+            {
+                return View("Form");
+            }
         }
 
         public IActionResult Results()
         {
             return View(TempData);
-        }
-
-        #region selecting from header
-        //public string Header([FromHeader] string accept) //used to bind from the header
-        //{
-        //    return $"Header: {accept}";
-        //} 
-        #endregion
-
-        #region selecting from header using a header element that doesn't follow C# naming standards
-        public string Header([FromHeader(Name = "Accept-Language")] string accept)
-        {
-            return $"Header: {accept}";
-        }
-        #endregion
-
-        [HttpPost]
-        [IgnoreAntiforgeryToken]
-        public Product Body([FromBody] Product model)
-        {
-            return model;
         }
     }
 }

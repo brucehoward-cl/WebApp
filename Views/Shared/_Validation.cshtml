@@ -1,0 +1,13 @@
+﻿<script src="/lib/jquery/jquery.min.js"></script>
+
+<!--The powershell commands to install jquery validation are as follows: -->
+<!--libman install jquery-validate@1.19.1 -d wwwroot/lib/jquery-validate-->
+<!--libman install jquery-validation-unobtrusive@3.2.11 -d wwwroot/lib/jquery-validation-unobtrusive-->
+<script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input.input-validation-error").addClass("is-invalid");
+    });
+</script>
