@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebApp.Pages
 {
-    public class FormHandlerModel : PageModel
+    public class MessageModel : PageModel
     {
         public void OnGet()
         {
