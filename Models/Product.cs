@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc; //added for remote validation
 
 namespace WebApp.Models
 {
-    [PhraseAndPrice(Phrase = "Small", Price = "100")]  //custom model attribute applied at a class level
+    //[PhraseAndPrice(Phrase = "Small", Price = "100")]  //custom model attribute applied at a class level //Pre Chapter 31
     public class Product
     {
         public long ProductId { get; set; }
@@ -23,12 +23,12 @@ namespace WebApp.Models
         public decimal Price { get; set; }
 
         [PrimaryKey(ContextType = typeof(DataContext), DataType = typeof(Category))]
-        [Remote("CategoryKey", "Validation", ErrorMessage = "Enter an existing key")]   //remote validation
+        //[Remote("CategoryKey", "Validation", ErrorMessage = "Enter an existing key")]   //remote validation
         public long CategoryId { get; set; }
         public Category Category { get; set; }
 
         [PrimaryKey(ContextType = typeof(DataContext), DataType = typeof(Supplier))]
-        [Remote("SupplierKey", "Validation", ErrorMessage = "Enter an existing key")]   //remote validation
+        //[Remote("SupplierKey", "Validation", ErrorMessage = "Enter an existing key")]   //remote validation
         public long SupplierId { get; set; }
         public Supplier Supplier { get; set; }
     }
